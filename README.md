@@ -2,6 +2,8 @@
 
 Customizable port knocking tool that requires sending a specific sequence of knocks on predefined ports in the correct order. Ports change every 30 seconds, generated using a secret key created by the server, which must be shared with the client. Upon a successful sequence, user-defined bash scripts can be executed.
 
+![Server/Client](./docs/server_client.gif)
+
 ## Features
 
 - **Port Knocking**: Secures access by requiring a specific sequence of knocks on predefined ports.
