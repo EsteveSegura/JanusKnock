@@ -3,7 +3,7 @@
 set -euo pipefail
 
 REPO="estevesegura/JanusKnock"
-VERSION="1.0.0"
+VERSION="0.0.1"
 
 # Detect OS and Architecture
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
