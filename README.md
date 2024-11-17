@@ -13,6 +13,20 @@ Customizable port knocking tool that requires sending a specific sequence of kno
 
 Aquí está tu sección de instalación actualizada en el README con el método que he creado:
 
+### Server behaviour
+
+```mermaid
+graph TD
+    Start(Server starts) -->|Reads key file or generates one| LoadKey[Load Secret Key]
+    LoadKey --> InitServer[Initialize Server and Listen for Knocks]
+    InitServer --> WaitKnocks[Wait for Knock Sequence]
+    WaitKnocks -->|Knock Received| VerifyKnocks[Verify Knock Sequence]
+    VerifyKnocks -->|Correct Sequence| ExecuteCommand[Execute On-Success Command]
+    ExecuteCommand --> WaitKnocks
+    VerifyKnocks -->|Wrong Sequence| LogError[Log Error]
+    LogError --> WaitKnocks
+```
+
 ---
 
 ## Installation
