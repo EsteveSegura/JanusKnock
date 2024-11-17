@@ -4,7 +4,7 @@
 VERSION="0.0.1"
 
 # Platforms
-PLATFORMS=("linux/amd64")
+PLATFORMS=("linux/amd64" "linux/arm64" "darwin/amd64" "windows/amd64")
 
 # Binary name
 BINARY="janusknock"

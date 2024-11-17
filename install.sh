@@ -1,21 +1,28 @@
 #!/bin/bash
-set -e
 
-REPO="your-username/JanusKnock"
-VERSION="v1.0.0"
+set -euo pipefail
 
+REPO="estevesegura/JanusKnock"
+VERSION="1.0.0"
+
+# Detect OS and Architecture
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
-if [[ "$ARCH" == "x86_64" ]]; then
-    ARCH="amd64"
-elif [[ "$ARCH" == "arm64" || "$ARCH" == "aarch64" ]]; then
-    ARCH="arm64"
-else
-    echo "Unsupported architecture: $ARCH"
-    exit 1
-fi
+case "$ARCH" in
+    x86_64)
+        ARCH="amd64"
+        ;;
+    arm64|aarch64)
+        ARCH="arm64"
+        ;;
+    *)
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+        ;;
+esac
 
+# Determine binary name
 BINARY="janusknock_${VERSION}_${OS}_${ARCH}"
 if [[ "$OS" == "windows" ]]; then
     BINARY+=".exe"
@@ -23,11 +30,21 @@ fi
 
 URL="https://github.com/$REPO/releases/download/$VERSION/$BINARY"
 
+# Download the binary
 echo "Downloading $BINARY from $URL..."
-curl -L "$URL" -o /tmp/$BINARY
+if ! curl -L "$URL" -o /tmp/$BINARY; then
+    echo "Error: Failed to download $BINARY"
+    exit 1
+fi
+
+# Make it executable
 chmod +x /tmp/$BINARY
 
+# Move binary to /usr/local/bin
 echo "Installing $BINARY to /usr/local/bin..."
-sudo mv /tmp/$BINARY /usr/local/bin/janusknock
+if ! sudo mv /tmp/$BINARY /usr/local/bin/janusknock; then
+    echo "Error: Failed to move $BINARY to /usr/local/bin"
+    exit 1
+fi
 
 echo "Installation complete! You can now run 'janusknock'."
