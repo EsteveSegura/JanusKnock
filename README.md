@@ -53,12 +53,56 @@ wget -qO- https://raw.githubusercontent.com/estevesegura/JanusKnock/main/install
 
 ## Usage
 
+### Quick Start
+
+Let's see a practical example of securing SSH access:
+
+#### Server Setup
+
+1. Create a bash script to open port 22 (save as `open_ssh.sh`):
+```bash
+#!/bin/bash
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+```
+
+2. Make the script executable:
+```bash
+chmod +x open_ssh.sh
+```
+
+3. Start JanusKnock server (add this to your system's boot sequence):
+```bash
+janusknock --mode server --file /path/to/.key --on-success "./open_ssh.sh"
+```
+If the key file doesn't exist, the server will automatically generate one.
+
+#### Client Setup
+
+1. Copy the key from the server to your client machine. The `-n` flag is crucial as it prevents adding a newline character that would invalidate the key:
+```bash
+echo -n "YOUR_SERVER_KEY" > .key
+```
+
+2. Execute the knock sequence:
+```bash
+janusknock --mode client --file .key --host SERVER_IP
+```
+
+If the key matches, the server will execute the bash script, opening port 22 for SSH access. You can now proceed with your SSH connection:
+```bash
+ssh user@SERVER_IP
+```
+
+This example demonstrates basic SSH protection, but remember - you can trigger any bash script on successful knock sequence, making JanusKnock highly versatile for various security scenarios.
+
+## Basic Usage
+
 ### Server Mode
 
 The server listens for a port knocking sequence and executes a user-defined command upon success.
 
 ```bash
-./janusknock --mode server --file /path/to/keyfile --on-success "/path/to/success_script.sh"
+janusknock --mode server --file /path/to/keyfile --on-success "/path/to/success_script.sh"
 ```
 
 - `--file`: Path to the key file used to generate the port sequence.
@@ -71,7 +115,7 @@ If no `--file` is provided, a `.key` file is generated automatically.
 The client sends the port knocking sequence to the target server.
 
 ```bash
-./janusknock --mode client --file /path/to/keyfile --host <server_ip>
+janusknock --mode client --file /path/to/keyfile --host <server_ip>
 ```
 
 - `--file`: Path to the key file containing the secret for generating the port sequence.
